@@ -1,0 +1,44 @@
+/* Add styles for the navigation component here */
+.navigation {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+  }
+  
+  .navigation ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navigation li {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  
+  .navigation a {
+    text-decoration: none;
+    color: #fff;
+    padding: 5px;
+  }
+  /* Add styles for the data editing component here */
+.data-editing {
+    margin-top: 20px;
+  }  
+  /* Add styles for the fee reminders component here */
+.fee-reminders {
+    margin-top: 20px;
+  }
+  /* Add styles for the scholarship notifications component here */
+.scholarship-notifications {
+    margin-top: 20px;
+  }
+  /* Add styles for the certificate distribution component here */
+.certificate-distribution {
+    margin-top: 20px;
+  }
+  /* Add styles for the notice updates component here */
+.notice-updates {
+    margin-top: 20px;
+  }
+  
