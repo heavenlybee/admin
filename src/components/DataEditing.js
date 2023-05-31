@@ -1,176 +1,344 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './style.css'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./DataEditing.css";
+import './style.css';
 
 function DataEditing() {
-  const [studentName, setStudentName] = useState('');
-  const [studentEmail, setStudentEmail] = useState('');
-  const [studentRegisterNum, setStudentRegisterNum] = useState('');
-  const [studentAddress, setStudentAddress]= useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    registerNumber: "",
+    dateOfBirth: "",
+    age: "",
+    branch: "",
+    semester: "",
+    address: "",
+    gender: "",
+    religion: "",
+    caste: "",
+    category: "",
+    plusTwoPercentage: "",
+    tenthPercentage: "",
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [students, setStudents] = useState([]);
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const fetchStudents = async () => {
+    try {
+      const response = await axios.get("/api/students");
+      setStudents(response.data);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    }
+  };
+
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     try {
-      const response = await axios.post('/api/update-student-data', {
-        name: studentName,
-        email: studentEmail,
-        registerNum : studentRegisterNum,
-        address: studentAddress,
-
+      await axios.post("/api/students", formData);
+      setFormData({
+        name: "",
+        email: "",
+        registerNumber: "",
+        dateOfBirth: "",
+        age: "",
+        branch: "",
+        semester: "",
+        address: "",
+        gender: "",
+        religion: "",
+        caste: "",
+        category: "",
+        plusTwoPercentage: "",
+        tenthPercentage: "",
       });
-
-      setSuccessMessage(response.data.message);
-      setStudentName('');
-      setStudentEmail('');
-      setStudentRegisterNum('');
+      fetchStudents();
     } catch (error) {
-      console.log(error.response.data);
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  const handleEdit = async (student) => {
+    try {
+      await axios.put(`/api/students/${student._id}`, formData);
+      setFormData({
+        name: "",
+        email: "",
+        registerNumber: "",
+        dateOfBirth: "",
+        age: "",
+        branch: "",
+        semester: "",
+        address: "",
+        gender: "",
+        religion: "",
+        caste: "",
+        category: "",
+        plusTwoPercentage: "",
+        tenthPercentage: "",
+      });
+      fetchStudents();
+    } catch (error) {
+      console.error("Error editing student:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/api/students/${id}`);
+      fetchStudents();
+    } catch (error) {
+      console.error("Error deleting student:", error);
     }
   };
 
   return (
-    <div>
-      <h2>Data Editing</h2>
-      <form onSubmit={handleSubmit}>
-        <ul>
-        <li>
-          Name:
+    <div className="container">
+      <form className="form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Name:</label>
           <input
             type="text"
-            value={studentName}
-            onChange={(e) => setStudentName(e.target.value)}
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Name"
+            required
           />
-        </li>
-        <li>
-          Email:
+        </div>
+        <div className="form-group">
+          <label>Email:</label>
           <input
             type="email"
-            value={studentEmail}
-            onChange={(e) => setStudentEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
           />
-        </li>
-        <li>
-          Register No:
+        </div>
+        <div className="form-group">
+          <label>Register Number:</label>
           <input
-            type="number"
-            value={studentRegisterNum}
-            onChange={(e) => setStudentRegisterNum(e.target.value)}
+            type="text"
+            name="registerNumber"
+            value={formData.registerNumber}
+            onChange={handleChange}
+            placeholder="Register Number"
+            required
           />
-        </li>
-        <li>
-        Address:
+        </div>
+        <div className="form-group">
+          <label>Date of Birth:</label>
           <input
-            type="address"
-            value={studentAddress}
-            onChange={(e) => setStudentAddress(e.target.value)}
+            type="date"
+            name="dateOfBirth"
+            value={formData.dateOfBirth}
+            onChange={handleChange}
+            required
           />
-          </li>
-        </ul>
-        <button type="submit">Update</button>
+        </div>
+        <div className="form-group">
+          <label>Age:</label>
+          <input
+            type="text"
+            name="age"
+            value={formData.age}
+            onChange={handleChange}
+            placeholder="Age"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Branch:</label>
+          <input
+            type="text"
+            name="branch"
+            value={formData.branch}
+            onChange={handleChange}
+            placeholder="Branch"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Semester:</label>
+          <input
+            type="text"
+            name="semester"
+            value={formData.semester}
+            onChange={handleChange}
+            placeholder="Semester"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Address:</label>
+          <textarea
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            placeholder="Address"
+            required
+          ></textarea>
+        </div>
+        <div className="form-group">
+          <label>Gender:</label>
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label>Religion:</label>
+          <input
+            type="text"
+            name="religion"
+            value={formData.religion}
+            onChange={handleChange}
+            placeholder="Religion"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Caste:</label>
+          <input
+            type="text"
+            name="caste"
+            value={formData.caste}
+            onChange={handleChange}
+            placeholder="Caste"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Category:</label>
+          <input
+            type="text"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            placeholder="Category"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Plus Two Mark Percentage:</label>
+          <input
+            type="text"
+            name="plusTwoPercentage"
+            value={formData.plusTwoPercentage}
+            onChange={handleChange}
+            placeholder="Plus Two Mark Percentage"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Tenth Mark Percentage:</label>
+          <input
+            type="text"
+            name="tenthPercentage"
+            value={formData.tenthPercentage}
+            onChange={handleChange}
+            placeholder="Tenth Mark Percentage"
+            required
+          />
+        </div>
+        <button type="submit" className="submit-button">
+          Submit
+        </button>
+        <button
+          type="button"
+          className="clear-button"
+          onClick={() =>
+            setFormData({
+              name: "",
+              email: "",
+              registerNumber: "",
+              dateOfBirth: "",
+              age: "",
+              branch: "",
+              semester: "",
+              address: "",
+              gender: "",
+              religion: "",
+              caste: "",
+              category: "",
+              plusTwoPercentage: "",
+              tenthPercentage: "",
+            })
+          }
+        >
+          Clear
+        </button>
       </form>
-      {successMessage && <p>{successMessage}</p>}
+      <table className="student-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Register Number</th>
+            <th>Date of Birth</th>
+            <th>Age</th>
+            <th>Branch</th>
+            <th>Semester</th>
+            <th>Address</th>
+            <th>Gender</th>
+            <th>Religion</th>
+            <th>Caste</th>
+            <th>Category</th>
+            <th>Plus Two Mark Percentage</th>
+            <th>Tenth Mark Percentage</th>
+            <th>Edit/Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {students.map((student) => (
+            <tr key={student._id}>
+              <td>{student.name}</td>
+              <td>{student.email}</td>
+              <td>{student.registerNumber}</td>
+              <td>{student.dateOfBirth}</td>
+              <td>{student.age}</td>
+              <td>{student.branch}</td>
+              <td>{student.semester}</td>
+              <td>{student.address}</td>
+              <td>{student.gender}</td>
+              <td>{student.religion}</td>
+              <td>{student.caste}</td>
+              <td>{student.category}</td>
+              <td>{student.plusTwoPercentage}</td>
+              <td>{student.tenthPercentage}</td>
+              <td>
+                <button onClick={() => handleEdit(student)}>Edit</button>
+                <button onClick={() => handleDelete(student._id)}>
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
 
 export default DataEditing;
 
-/*import React,{ Component } from 'react'
 
-class Form extends Component{
-constructor(props){
-	super(props)
-	this.state = { email:'',name:'', age:null, address:'',phoneNo:''}
-	this.handleChange = this.handleChange.bind(this)
-	this.handleSubmit = this.handleSubmit.bind(this)
-}
-
-// Form submitting logic, prevent default page refresh
-handleSubmit(event){
-	const { email, name, age, address, phoneNo } = this.state
-	event.preventDefault()
-	alert(`
-	____Your Details____\n
-	Email : ${email}
-	Name : ${name}
-	Age : ${age}
-	Address : ${address}
-	Phone No : ${phoneNo}
-	`)
-}
-
-// Method causes to store all the values of the
-// input field in react state single method handle
-// input changes of all the input field using ES6
-// javascript feature computed property names
-handleChange(event){
-	this.setState({
-	// Computed property names
-	// keys of the objects are computed dynamically
-	[event.target.name] : event.target.value
-	})
-}
-
-// Return a controlled form i.e. values of the
-// input field not stored in DOM values are exist
-// in react component itself as state
-render(){
-	return(
-	<form onSubmit={this.handleSubmit}>
-		<div>
-		<label htmlFor='email'>Email</label>
-		<input
-			name='email'
-			placeholder='Email'
-			value = {this.state.email}
-			onChange={this.handleChange}
-		/>
-		</div>
-		<div>
-		<label htmlFor='name'>Name</label>
-		<input
-			name='name'
-			placeholder='Name'
-			value={this.state.name}
-			onChange={this.handleChange}
-		/>
-		</div>
-		<div>
-		<label htmlFor='age'>Age</label>
-		<input
-			name='age'
-			placeholder='Age'
-			value={this.state.age}
-			onChange={this.handleChange}
-		/>
-		</div>
-		<div>
-		<label htmlFor='address'>Address</label>
-		<input
-			name='address'
-			placeholder='Address'
-			value={this.state.address}
-			onChange={this.handleChange}
-		/>
-		</div>
-		<div>
-		<label htmlFor='phoneNo'>Phone Number</label>
-		<input
-			name='phoneNo'
-			placeholder='Phone No'
-			value={this.state.phoneNo}
-			onChange={this.handleChange}
-		/>
-		</div>
-		<div>
-		<button>Create Account</button>
-		</div>
-	</form>
-	)
-}
-}
-
-export default Form*/
 
